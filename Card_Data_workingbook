@@ -1,0 +1,110 @@
+
+import pandas as pd
+import datetime as dt
+import numpy as np
+from matplotlib import pyplot as plt
+import seaborn as sns
+
+
+#Card Data Cleanup
+card_data = pd.read_excel("/Users/kamorimoss/Documents/Card Transcation Data.xlsx")
+
+
+#drop null values 
+card_data = card_data.dropna()
+
+
+#drop duplicates for data
+card_data = card_data.drop_duplicates()
+
+
+#converting acct_open_data to datetime
+card_data['acct_open_date'] = pd.to_datetime(card_data['acct_open_date']) 
+
+#formatting the expires columns and checking types
+card_data['expires'] = pd.to_datetime(card_data['expires'], format='%Y-%m-%d')
+card_data.dtypes
+
+#setting acctount opening years with dt
+card_data['acct_open_year'] = card_data['acct_open_date'].dt.year
+card_data.dtypes
+
+#formating the expires with dt
+card_data['year_expires'] = card_data['expires'].dt.year
+card_data.dtypes
+
+#converting the year expiring to datemine value
+card_data['year_expires'] = pd.to_datetime(card_data['year_expires'])
+
+#formatting the month expiring column
+card_data['month_expires'] = card_data['expires'].dt.strftime('%B')
+
+#Ex'2001' for year expires
+card_data['year_expires'] = card_data['expires'].dt.strftime('%Y')
+
+card_data['acct_open_year'] = card_data['acct_open_date'].dt.strftime('%Y')
+
+# %%zcard_data['year_expires'].value_counts
+
+# %%
+card_data['month_expires'].value_counts
+
+# %%
+card_data['year_expires'] = card_data['expires'].dt.strftime('%Y')
+
+
+# %%
+card_data.dtypes
+
+# %%
+#Checking for outliers when examining credit limit
+# Box Plot
+sns.boxplot(x=card_data['credit_limit'])
+plt.show()
+
+# Scatter Plot (for bivariate data)
+plt.scatter(x=card_data['credit_limit'], y=card_data['acct_open_year'])
+plt.show()
+
+# Histogram
+plt.hist(card_data['credit_limit'])
+plt.show()
+
+
+# %%
+#graphing top 10 accounting opening years
+data = card_data['acct_open_date'] \
+                    .head(10) \
+                    .plot(kind ='bar', title = 'Top Years Account Opened')
+data.set_xlabel('Year Introduced')
+data.set_ylabel('Count')
+
+
+
+# %%
+#graphing top 10 accounting opening years different style
+top_10_years = card_data['acct_open_year'].value_counts().head(10)
+top_10_years.plot(kind='bar', title='Top Years Account Opened')
+plt.xlabel('Year Introduced')
+plt.ylabel('Count')
+
+# %%
+plt.scatter(card_data['acct_open_year'],card_data['credit_limit'],c='red',marker='o')
+plt.xlabel('Account Open Year')
+plt.ylabel('Credit Limit')
+
+
+# %%
+card_data.groupby('acct_open_year')['credit_limit'].mean().plot(kind='bar')
+plt.xlabel('Account Open Year')
+plt.ylabel('Average Credit Limit')
+
+# %%
+#Should Take Long
+#transaction_data = pd.read_excel("/Users/kamorimoss/Documents/Card Transcation Data.xlsx", sheet_name="transactions_data")
+#transaction_data.head()
+
+
+# %%
+#uaer_data
+#user_data = pd.read_excel("/Users/kamorimoss/Documents/Card Transcation Data.xlsx", sheet_name="user_data")
